@@ -1,9 +1,6 @@
-> 热烈庆祝一起听歌吧微信小程序上架成功，搜索：***灵魂自习室***
+> 热烈庆祝一起听歌吧微信小程序上架成功，搜索：***蛤蟆自习室***
 
 > 使用docker一键部署一起听歌吧应用，从此你也拥有了自己的点歌台，docker部署详见下方
-
-> 一起听歌吧官方所使用服务器配置,趁双11新用户1年只要84元（建议买3年）：[阿里云ecs_t5_突发型](https://www.aliyun.com/minisite/goods?userCode=ze4tzlf9&share_source=copy_link)
-> 趁双11腾讯云新用户1年只要88元（建设买3年）：[腾讯云标准型S4](https://cloud.tencent.com/act/cps/redirect?redirect=10140&cps_key=52c40793a9f078023fbc4d27eee65032&from=activity)
 
 > 目前服务器配置比较弱鸡，经常炸机，欢迎大佬赞助。mail to me .
 
@@ -19,14 +16,12 @@
 
 后端: 本项目
 
-前端: [Jusic-ui](https://github.com/JumpAlang/Jusic-ui/tree/jusic-ui-houses)
-小程序: [Jusic-mini](https://github.com/JumpAlang/Jusic_mini)
+前端: [Jusic-ui](https://github.com/xiaoxin0125/Jusic-ui)
+小程序: [Jusic-mini](https://github.com/xiaoxin0125/Jusic_mini)
 
 
 
 ## docker部署
-> 一起听歌吧官方所使用服务器配置,新用户有优惠价100左右：[阿里云ecs_t5_突发型](https://www.aliyun.com/minisite/goods?userCode=ze4tzlf9&share_source=copy_link)
->
 1.只要nodejs音乐api接口
   请使用<https://hub.docker.com/r/jumpalang/jusic_music_api>查看说明
    
@@ -138,11 +133,7 @@
 
 ## 在线预览
 
-Jusic：[Jusic 点歌台](http://music.alang.run)
-
-## 打赏请我喝奶茶
-[打赏](http://www.alang.run/sponsor)
-
+Jusic：[Jusic 点歌台](http://pop.hanxin.vip/#/)
 
 
 ## 相关项目
