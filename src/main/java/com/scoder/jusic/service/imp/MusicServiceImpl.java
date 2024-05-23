@@ -2454,6 +2454,21 @@ public class MusicServiceImpl implements MusicService {
         }
     }
 
+    private JSONArray getAICurrentPageListDirect(int pageNo,int pageSize,JSONArray data){
+        int size = data.size();
+        int pages = (size+pageSize-1)/pageSize;
+        if(pageNo > pages){
+            return new JSONArray();
+        }else{
+            JSONArray pagedArray = new JSONArray();
+            for(int i = (pageNo-1)*pageSize; i < (pageNo==pages?size:pageNo*pageSize); i++) {
+
+                pagedArray.add(data.getJSONObject(i));
+            }
+            return pagedArray;
+        }
+    }
+
 
     private HulkPage searchLZ(Music music,HulkPage hulkPage) {
         String listStr = null;
@@ -2553,11 +2568,10 @@ public class MusicServiceImpl implements MusicService {
                 album.put("name",songname);
                 buildJSONObject.put("album",album);
                 buildJSONArray.add(buildJSONObject);
-                buildJSONArray.add(jsonObject);
             }
         }
         if(buildJSONArray.size() > 0){
-            List list = JSONObject.parseObject(JSONObject.toJSONString(getCurrentPageList(hulkPage.getPageIndex(),hulkPage.getPageSize(),buildJSONArray)), List.class);
+            List list = JSONObject.parseObject(JSONObject.toJSONString(getAICurrentPageListDirect(hulkPage.getPageIndex(),hulkPage.getPageSize(),buildJSONArray)), List.class);
             hulkPage.setTotalSize(buildJSONArray.size());
             hulkPage.setData(list);
         }else{
