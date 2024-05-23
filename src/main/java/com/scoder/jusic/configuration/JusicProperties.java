@@ -125,6 +125,8 @@ public class JusicProperties {
      * json格式歌曲列表（for禁歌）
      */
     private String musicJson = "D:\\JAVA\\IdeaWorkspaces\\Jusic-serve\\src\\main\\resources\\lizhimusic.json";
+
+    private String aiUrl = "https://studio-api.suno.ai/api/trending/metaplaylist";
     /**
      * 音乐服务
      */

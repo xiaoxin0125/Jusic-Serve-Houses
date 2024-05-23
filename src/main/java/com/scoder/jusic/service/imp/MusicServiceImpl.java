@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author H
@@ -155,7 +156,7 @@ public class MusicServiceImpl implements MusicService {
     @Override
     public void updateMusicUrl(Music result){
         // 防止选歌的时间超过音乐链接的有效时长
-        if (!"lz".equals(result.getSource()) && result.getPickTime() + jusicProperties.getMusicExpireTime() <= System.currentTimeMillis()) {
+        if (!"ai".equals(result.getSource()) && !"lz".equals(result.getSource()) && result.getPickTime() + jusicProperties.getMusicExpireTime() <= System.currentTimeMillis()) {
             String musicUrl;
             if("qq".equals(result.getSource())){
                 musicUrl = this.getQQMusicUrl(result.getId());
@@ -623,7 +624,63 @@ public class MusicServiceImpl implements MusicService {
         return music;
     }
 
-
+    @Override
+    public Music getAIMusic(String id) {
+        Music music = null;
+        String listStr = null;
+        try {
+            listStr = Unirest.get(jusicProperties.getAiUrl()).asString().getBody();//FileOperater.commonReadFile(resourceLoader.getResource(jusicProperties.getMusicJson()));
+        } catch (Exception e) {
+            log.error("访问ai播放列表失败，message:[{}]",e.getMessage());
+        }
+        if(listStr == null || "".equals(listStr)) {
+            return null;
+        }
+        JSONObject result = JSONObject.parseObject(listStr);
+        Integer virTotal = result.getInteger("num_total_results");
+        if(virTotal == null || virTotal < 1){
+            return null;
+        }
+        JSONArray musicList = result.getJSONArray("playlists");
+        JSONArray mergedPlaylistClips = musicList.stream()
+                .flatMap(obj -> ((JSONObject) obj).getJSONArray("playlist_clips").stream())
+                .collect(Collectors.toCollection(JSONArray::new));
+        JSONObject data = null;
+        for(int i = 0; i < mergedPlaylistClips.size(); i++){
+            JSONObject temp = mergedPlaylistClips.getJSONObject(i).getJSONObject("clip");
+            if(temp.getString("id").equals(id)){
+                data = temp;
+            }
+        }
+        if(data == null){
+            return null;
+        }
+        music = new Music();
+        music.setSource("ai");
+        String songId = data.getString("id");
+        music.setId(songId);
+        JSONObject metaData = data.getJSONObject("metadata");
+        String lyrics = metaData.getString("prompt");
+        music.setLyric(lyrics);
+        String name = data.getString("title");
+        music.setName(name);
+        String singerNames = data.getString("display_name");
+        music.setArtist(singerNames);
+        String url = data.getString("audio_url");
+        music.setUrl(url);
+        Double durationDouble = metaData.getDouble("duration");
+        durationDouble = durationDouble*1000;
+        long duration = durationDouble.longValue();
+        music.setDuration(duration);
+        Album album = new Album();
+        album.setId(0);
+        album.setName(music.getName());
+        album.setArtist(singerNames);
+        album.setPictureUrl(data.getString("image_url"));
+        music.setAlbum(album);
+        music.setPictureUrl(data.getString("image_url"));
+        return music;
+    }
     @Override
     public Music getLZMusic(Integer index) {
         Music music = null;
@@ -1393,6 +1450,8 @@ public class MusicServiceImpl implements MusicService {
             return searchMG(music,hulkPage);
         }else if(music.getSource().equals("lz")){
             return searchLZ(music,hulkPage);
+        }else if(music.getSource().equals("ai")){
+            return searchAI(music,hulkPage);
         }if(music.getSource().equals("wydt")){
             if(StringUtils.isDTMusicId(music.getName())){
                 return searchWYDT(music.getName().substring(1),hulkPage);
@@ -1680,7 +1739,7 @@ public class MusicServiceImpl implements MusicService {
         Integer failCount = 0;
         while (failCount < 2) {
             try {
-                if(failCount.equals(1)){
+                if(failCount.equals(0)){
                     cookie = "";
                 }else{
                     cookie = NETEASE_COOKIE;
@@ -2393,7 +2452,81 @@ public class MusicServiceImpl implements MusicService {
         }
         return hulkPage;
     }
+    private HulkPage searchAI(Music music,HulkPage hulkPage) {
+        String listStr = null;
+        try {
+            listStr = Unirest.get(jusicProperties.getAiUrl()).asString().getBody();//FileOperater.commonReadFile(resourceLoader.getResource(jusicProperties.getMusicJson()));
+        } catch (Exception e) {
+            log.error("访问ai播放列表失败，message:[{}]",e.getMessage());
+        }
+        if(listStr == null || "".equals(listStr)) {
+            hulkPage.setTotalSize(0);
+            hulkPage.setData(new Object[]{});
+            return hulkPage;
+        }
+        JSONObject result = JSONObject.parseObject(listStr);
+        Integer virTotal = result.getInteger("num_total_results");
+        if(virTotal == null || virTotal < 1){
+            hulkPage.setTotalSize(0);
+            hulkPage.setData(new Object[]{});
+            return hulkPage;
+        }
+        JSONArray musicList = result.getJSONArray("playlists");
+        JSONArray data = musicList.stream()
+                .flatMap(obj -> ((JSONObject) obj).getJSONArray("playlist_clips").stream())
+                .collect(Collectors.toCollection(JSONArray::new));
 
+        int size = data.size();
+        if(music.getName() == null || "".equals(music.getName())) {
+            List list = JSONObject.parseObject(JSONObject.toJSONString(getCurrentPageList(hulkPage.getPageIndex(),hulkPage.getPageSize(),data)), List.class);
+            hulkPage.setData(list);
+            hulkPage.setTotalSize(size);
+            return hulkPage;
+        }
+        JSONArray buildJSONArray = new JSONArray();
+
+        for(int i = 0; i < size; i++) {
+            JSONObject jsonObject = data.getJSONObject(i);
+            if (jsonObject.getString("display_name").indexOf(music.getName()) != -1 || jsonObject.getString("title").indexOf(music.getName()) != -1) {
+                JSONObject buildJSONObject = new JSONObject();
+                buildJSONObject.put("artist",jsonObject.getString("display_name"));
+                String songname = jsonObject.getString("title");
+                buildJSONObject.put("name",songname);
+                String songmid = jsonObject.getString("id");
+                buildJSONObject.put("id",songmid);
+                JSONObject metaData = jsonObject.getJSONObject("metadata");
+                Double durationDouble = metaData.getDouble("duration");
+                durationDouble = durationDouble*1000;
+                long interval = durationDouble.longValue();
+                buildJSONObject.put("duration",interval);
+                JSONObject privilege = new JSONObject();
+                privilege.put("st",1);
+                privilege.put("fl",1);
+                buildJSONObject.put("privilege",privilege);
+
+                JSONObject album = new JSONObject();
+                JSONObject albumObject = jsonObject.getJSONObject("album");
+                String picUrl = jsonObject.getString("image_url");
+                buildJSONObject.put("picture_url",picUrl);
+                album.put("picture_url",picUrl);
+                album.put("id",songmid);
+                album.put("name",songname);
+                buildJSONObject.put("album",album);
+                buildJSONArray.add(buildJSONObject);
+                buildJSONArray.add(jsonObject);
+            }
+        }
+        if(buildJSONArray.size() > 0){
+            List list = JSONObject.parseObject(JSONObject.toJSONString(getCurrentPageList(hulkPage.getPageIndex(),hulkPage.getPageSize(),buildJSONArray)), List.class);
+            hulkPage.setTotalSize(buildJSONArray.size());
+            hulkPage.setData(list);
+        }else{
+            hulkPage.setTotalSize(0);
+            hulkPage.setData(new Object[]{});
+            return hulkPage;
+        }
+        return hulkPage;
+    }
     private HulkPage searchMG(Music music,HulkPage hulkPage) {
         StringBuilder url = new StringBuilder()
                 .append(jusicProperties.getMusicServeDomainMg())

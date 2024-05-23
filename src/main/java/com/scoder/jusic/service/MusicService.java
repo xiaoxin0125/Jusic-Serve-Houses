@@ -81,6 +81,8 @@ public interface MusicService {
 
     Music getLZMusic(Integer index);
 
+    Music getAIMusic(String id);
+
     Music getWYMusicById(String id);
 
     Music getQQMusicById(String id);

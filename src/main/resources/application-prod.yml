@@ -40,6 +40,7 @@ jusic:
   default-music-file: 'classpath:music/default-list.txt'#'file:/usr/local/nginx/html/default-list.txt' # ## #
   wy-top-url: ${WyTopUrl:3778678}
   music-json: 'classpath:lizhimusic.json'#'file:/usr/local/nginx/html/lizhimusic.json'##json格式歌曲列表（for禁歌） # #
+  ai-url: 'https://studio-api.suno.ai/api/trending/metaplaylist'
   music-serve-domain: ${music-api}:3000 #'http://www.alang.run:8888'
   music-serve-domain-qq: ${music-api}:3300 #'http://www.alang.run:3300'
   music-serve-domain-mg: ${music-api}:3400 #'http://www.alang.run:3400'#
