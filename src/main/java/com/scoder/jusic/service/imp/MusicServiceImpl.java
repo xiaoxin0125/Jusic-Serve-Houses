@@ -165,7 +165,7 @@ public class MusicServiceImpl implements MusicService {
                 musicUrl = this.getMusicUrl(result.getId());
             }
             if(musicUrl == null){
-                musicUrl = this.getKwXmUrlIterator(result.getName()+"+"+result.getArtist());
+                musicUrl = this.getKwXmUrlIterator(result.getName()+"&"+result.getArtist());
             }
             if (Objects.nonNull(musicUrl)) {
                 result.setUrl(musicUrl);
@@ -488,7 +488,7 @@ public class MusicServiceImpl implements MusicService {
                         music.setDuration(duration);
                         String url = data.getString("url");
                         if(url == null){
-                            url = this.getKwXmUrlIterator(music.getName()+"+"+music.getArtist());
+                            url = this.getKwXmUrlIterator(music.getName()+"&"+music.getArtist());
                         }
                         music.setUrl(url);
 
@@ -765,7 +765,7 @@ public class MusicServiceImpl implements MusicService {
                         music.setArtist(singerNames);
                         String url = data.getString("128k");
                         if(url == null){
-                            url = this.getKwXmUrlIterator(music.getName()+"+"+music.getArtist());
+                            url = this.getKwXmUrlIterator(music.getName()+"&"+music.getArtist());
                         }
                         music.setUrl(url);
 
@@ -927,7 +927,7 @@ public class MusicServiceImpl implements MusicService {
                         music.setDuration(duration);
                         String url = getQQMusicUrl(id);
                         if(url == null){
-                            url = this.getKwXmUrlIterator(music.getName()+"+"+music.getArtist());
+                            url = this.getKwXmUrlIterator(music.getName()+"&"+music.getArtist());
                         }
                         music.setUrl(url);
                         Album album = new Album();
@@ -998,7 +998,7 @@ public class MusicServiceImpl implements MusicService {
 
                         long duration = song.getLong("dt");
                         if(url == null){
-                            url = this.getKwXmUrlIterator(music.getName()+"+"+music.getArtist());
+                            url = this.getKwXmUrlIterator(music.getName()+"&"+music.getArtist());
                         }
                         music.setUrl(url);
                         music.setDuration(duration);
@@ -1062,7 +1062,7 @@ public class MusicServiceImpl implements MusicService {
 
                         long duration = song.getLong("duration");
 //                        if(url == null){
-//                            url = this.getKwXmUrlIterator(music.getArtist()+"+"+music.getName());
+//                            url = this.getKwXmUrlIterator(music.getArtist()+"&"+music.getName());
 //                        }
                         music.setUrl(url);
                         music.setDuration(duration);
@@ -1225,7 +1225,7 @@ public class MusicServiceImpl implements MusicService {
                         music.setArtist(singerNames);
                         String url = data.getString("128k");
                         if(url == null){
-                            url = this.getKwXmUrlIterator(music.getName()+"+"+music.getArtist());
+                            url = this.getKwXmUrlIterator(music.getName()+"&"+music.getArtist());
                         }
                         music.setUrl(url);
 
