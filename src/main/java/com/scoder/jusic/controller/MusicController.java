@@ -96,6 +96,14 @@ public class MusicController {
             }else{
                 pick = musicService.getLZMusic(Integer.valueOf(music.getId()));
             }
+        }else if("ai".equals(music.getSource())){
+            if(StringUtils.isQQMusicId(music.getId())){
+                pick = musicService.getQQMusicById(music.getId());
+            }else if(StringUtils.isWYMusicId(music.getId())){
+                pick = musicService.getWYMusicById(music.getId());
+            }else{
+                pick = musicService.getAIMusic(music.getId());
+            }
         }else if("wydt".equals(music.getSource())){
             if(music.getId() != null){
                 pick = musicService.getWYDTMusicById(music.getId());
@@ -591,7 +599,7 @@ public class MusicController {
     public void search(Music music, HulkPage hulkPage, StompHeaderAccessor accessor) {
         String sessionId = accessor.getHeader("simpSessionId").toString();
         String houseId = (String)accessor.getSessionAttributes().get("houseId");
-        if ((music.getName() == null || music.getName() == "")&& !"lz".equals(music.getSource())) {//李志的歌不判断搜索词空
+        if ((music.getName() == null || music.getName() == "")&& !"lz".equals(music.getSource()) && !"ai".equals(music.getSource())) {//李志的歌不判断搜索词空
             log.info("session: {} 尝试搜索音乐, 但关键字为空", sessionId);
             sessionService.send(sessionId, MessageType.NOTICE, Response.failure((Object) null, "请输入要搜索的关键字"),houseId);
             return;

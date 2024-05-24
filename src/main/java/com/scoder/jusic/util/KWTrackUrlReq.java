@@ -140,14 +140,14 @@ public class KWTrackUrlReq {
      * @param quality 品质(128k 320k flac)
      * @return
      */
-    public String getTrackUrl(String mid, String quality) {
+    public String getTrackUrl3(String mid, String quality) {
         String params = "";
         switch (quality) {
             case "128k":
                 params = "corp=kuwo&p2p=1&type=convert_url2&format=mp3&rid=" + mid;
                 break;
             case "320k":
-                params = String.format(" params = String.format(\"user=0&android_id=0&prod=kwplayer_ar_9.3.1.3&corp=kuwo&newver=3&vipver=9.3.1.3&source=oppo&p2p=1&notrace=0&type=convert_url2&format=flac|mp3|aac&sig=0&rid=%s&priority=bitrate&loginUid=0&network=WIFI&loginSid=0&mode=download", mid);
+                params = String.format("user=0&android_id=0&prod=kwplayer_ar_9.3.1.3&corp=kuwo&newver=3&vipver=9.3.1.3&source=oppo&p2p=1&notrace=0&type=convert_url2&format=flac|mp3|aac&sig=0&rid=%s&priority=bitrate&loginUid=0&network=WIFI&loginSid=0&mode=download", mid);
                 break;
             case "flac":
                 params = "corp=kuwo&p2p=1&type=convert_url2&format=flac&rid=" + mid;
@@ -167,12 +167,10 @@ public class KWTrackUrlReq {
             csrf = kwToken;
         }
         String trackUrl = ReUtil.get("url=(.*?)\r\n", resp.getBody().toString(), 1);
-        if(trackUrl.indexOf("/4141006416.mp3") != -1 || trackUrl.indexOf("/2272659253.mp3") != -1){
-            trackUrl = getTrackUrl3(mid,quality);
-        }
+
         return trackUrl;
     }
-    public String getTrackUrl3(String mid, String quality) {
+    public String getTrackUrl(String mid, String quality) {
         String params = "";
         switch (quality) {
             case "128k":
@@ -199,6 +197,9 @@ public class KWTrackUrlReq {
             csrf = kwToken;
         }
         String trackUrl = ReUtil.get("\"url\":\"(.*?)\"", resp.getBody().toString(), 1);
+        if(trackUrl == null || trackUrl.indexOf("/4141006416.mp3") != -1 || trackUrl.indexOf("/2272659253.mp3") != -1){
+            trackUrl = getTrackUrl3(mid,quality);
+        }
         return trackUrl;
     }
 
@@ -367,11 +368,14 @@ public class KWTrackUrlReq {
     public static void main(String[] args) {
         KWTrackUrlReq kwTrackUrlReq = new KWTrackUrlReq();
 //        String mid = kwTrackUrlReq.searchByKeyWord("周杰伦晴天");
-//        String mid = kwTrackUrlReq.searchByKeyWord("可爱女人+周杰伦");
-        String mid = kwTrackUrlReq.searchByKeyWord("学不会遗忘+庄东茹");
+        String mid2 = kwTrackUrlReq.searchByKeyWord("吉时行乐一条龙"+"+笑喜人集团,小精灵,李毅杰PISSY,邓典果DDG,JarStick");
+//        String mid3 = kwTrackUrlReq.searchByKeyWord("学不会遗忘+庄东茹");
         //new KWTrackUrlReq().getTrackUrl("228908","320k");
-        System.out.println(mid);
-        System.out.println(kwTrackUrlReq.getTrackUrl(mid,"320k"));
+//        System.out.println(mid);
+//        System.out.println(kwTrackUrlReq.getTrackUrl(mid,"flac"));
+        System.out.println(kwTrackUrlReq.getTrackUrl(mid2,"flac"));
+//        System.out.println(kwTrackUrlReq.getTrackUrl(mid3,"flac"));
+
 //        String url = kwTrackUrlReq.getTrackUrl2("94239","320k");
 //        System.out.println(url);
 //        HttpResponse response = Unirest.get("https://api.live.bilibili.com/room/v1/Danmu/getConf?room_id=1026846&platform=pc&player=web").asString();
