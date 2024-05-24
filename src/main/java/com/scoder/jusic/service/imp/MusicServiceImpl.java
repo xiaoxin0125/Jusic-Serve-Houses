@@ -9,7 +9,6 @@ import com.scoder.jusic.model.*;
 import com.scoder.jusic.repository.*;
 import com.scoder.jusic.service.MusicService;
 import com.scoder.jusic.util.KWTrackUrlReq;
-import com.scoder.jusic.util.QQTrackUrlReq;
 import com.scoder.jusic.util.StringUtils;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -1299,22 +1298,15 @@ public class MusicServiceImpl implements MusicService {
     public String getQQMusicUrl(String musicId) {
         HttpResponse<String> response = null;
         String result = null;
-        QQTrackUrlReq qqTrackUrlReq = new QQTrackUrlReq();
         try{
-            return qqTrackUrlReq.getTrackUrl(musicId,"320k");
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
-            try{
-                response = Unirest.get(jusicProperties.getMusicServeDomainQq() + "/song/urls?id="+musicId)
-                        .asString();
-                JSONObject jsonObject = JSONObject.parseObject(response.getBody());
-                if (response.getStatus() == 200 && jsonObject.get("result").equals(100)) {
-                    return jsonObject.getJSONObject("data").getString(musicId);
-                }
-            }catch(Exception exception){
-                log.error("qq音乐链接获取异常, 请检查音乐服务; Exception: [{}]", exception.getMessage());
+            response = Unirest.get(jusicProperties.getMusicServeDomainQq() + "/song/urls?id="+musicId)
+                    .asString();
+            JSONObject jsonObject = JSONObject.parseObject(response.getBody());
+            if (response.getStatus() == 200 && jsonObject.get("result").equals(100)) {
+                return jsonObject.getJSONObject("data").getString(musicId);
             }
-
+        }catch(Exception exception){
+            log.error("qq音乐链接获取异常, 请检查音乐服务; Exception: [{}]", exception.getMessage());
         }
         return result;
     }
