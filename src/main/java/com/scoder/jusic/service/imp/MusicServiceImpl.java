@@ -480,7 +480,7 @@ public class MusicServiceImpl implements MusicService {
                         for(int j = 0; j < singerSize; j++){
                             singerNames += singerArray.getJSONObject(j).getString("name")+"&";
                         }
-                        if(singerNames.endsWith(";")){
+                        if(singerNames.endsWith("&")){
                             singerNames = singerNames.substring(0,singerNames.length()-1);
                         }
                         music.setArtist(singerNames);
@@ -759,7 +759,7 @@ public class MusicServiceImpl implements MusicService {
                         for(int j = 0; j < singerSize; j++){
                             singerNames += singerArray.getJSONObject(j).getString("name")+"&";
                         }
-                        if(singerNames.endsWith(";")){
+                        if(singerNames.endsWith("&")){
                             singerNames = singerNames.substring(0,singerNames.length()-1);
                         }
                         music.setArtist(singerNames);
@@ -918,7 +918,7 @@ public class MusicServiceImpl implements MusicService {
                         for(int j = 0; j < singerSize; j++){
                             singerNames += singerArray.getJSONObject(j).getString("name")+"&";
                         }
-                        if(singerNames.endsWith(";")){
+                        if(singerNames.endsWith("&")){
                             singerNames = singerNames.substring(0,singerNames.length()-1);
                         }
                         music.setArtist(singerNames);
@@ -990,7 +990,7 @@ public class MusicServiceImpl implements MusicService {
                         for(int j = 0; j < singerSize; j++){
                             singerNames += singerArray.getJSONObject(j).getString("name")+"&";
                         }
-                        if(singerNames.endsWith(";")){
+                        if(singerNames.endsWith("&")){
                             singerNames = singerNames.substring(0,singerNames.length()-1);
                         }
                         music.setArtist(singerNames);
@@ -1130,7 +1130,7 @@ public class MusicServiceImpl implements MusicService {
                             for(int j = 0; j < singerSize; j++){
                                 singerNames += singerArray.getJSONObject(j).getString("name")+"&";
                             }
-                            if(singerNames.endsWith(";")){
+                            if(singerNames.endsWith("&")){
                                 singerNames = singerNames.substring(0,singerNames.length()-1);
                             }
                             buildJSONObject.put("picture_url","");
@@ -1219,7 +1219,7 @@ public class MusicServiceImpl implements MusicService {
                         for(int j = 0; j < singerSize; j++){
                             singerNames += singerArray.getJSONObject(j).getString("name")+"&";
                         }
-                        if(singerNames.endsWith(";")){
+                        if(singerNames.endsWith("&")){
                             singerNames = singerNames.substring(0,singerNames.length()-1);
                         }
                         music.setArtist(singerNames);
@@ -1515,7 +1515,7 @@ public class MusicServiceImpl implements MusicService {
                     for(int j = 0; j < singerSize; j++){
                         singerNames += singerArray.getJSONObject(j).getString("name")+"&";
                     }
-                    if(singerNames.endsWith(";")){
+                    if(singerNames.endsWith("&")){
                         singerNames = singerNames.substring(0,singerNames.length()-1);
                     }
                     buildJSONObject.put("artist",singerNames);
@@ -1586,7 +1586,7 @@ public class MusicServiceImpl implements MusicService {
                     for(int j = 0; j < singerSize; j++){
                         singerNames += singerArray.getJSONObject(j).getString("name")+"&";
                     }
-                    if(singerNames.endsWith(";")){
+                    if(singerNames.endsWith("&")){
                         singerNames = singerNames.substring(0,singerNames.length()-1);
                     }
                     buildJSONObject.put("artist",singerNames);
@@ -1651,7 +1651,7 @@ public class MusicServiceImpl implements MusicService {
                     for(int j = 0; j < singerSize; j++){
                         singerNames += singerArray.getJSONObject(j).getString("name")+"&";
                     }
-                    if(singerNames.endsWith(";")){
+                    if(singerNames.endsWith("&")){
                         singerNames = singerNames.substring(0,singerNames.length()-1);
                     }
                     buildJSONObject.put("artist",singerNames);
@@ -1761,7 +1761,7 @@ public class MusicServiceImpl implements MusicService {
                         for(int j = 0; j < singerSize; j++){
                             singerNames += singerArray.getJSONObject(j).getString("name")+"&";
                         }
-                        if(singerNames.endsWith(";")){
+                        if(singerNames.endsWith("&")){
                             singerNames = singerNames.substring(0,singerNames.length()-1);
                         }
                         buildJSONObject.put("picture_url","");
@@ -2595,7 +2595,7 @@ public class MusicServiceImpl implements MusicService {
                     for(int j = 0; j < singerSize; j++){
                         singerNames += singerArray.getJSONObject(j).getString("name")+"&";
                     }
-                    if(singerNames.endsWith(";")){
+                    if(singerNames.endsWith("&")){
                         singerNames = singerNames.substring(0,singerNames.length()-1);
                     }
                     buildJSONObject.put("artist",singerNames);
