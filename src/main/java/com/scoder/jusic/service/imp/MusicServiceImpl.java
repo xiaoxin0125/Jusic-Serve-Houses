@@ -9,6 +9,7 @@ import com.scoder.jusic.model.*;
 import com.scoder.jusic.repository.*;
 import com.scoder.jusic.service.MusicService;
 import com.scoder.jusic.util.KWTrackUrlReq;
+import com.scoder.jusic.util.QQTrackUrlReq2;
 import com.scoder.jusic.util.StringUtils;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -50,6 +51,9 @@ public class MusicServiceImpl implements MusicService {
 
     @Autowired
     private ResourceLoader resourceLoader;
+
+    @Autowired
+    private QQTrackUrlReq2 qqTrackUrlReq2;
     /**
      * 把音乐放进点歌列表
      */
@@ -158,7 +162,7 @@ public class MusicServiceImpl implements MusicService {
         if (!"ai".equals(result.getSource()) && !"lz".equals(result.getSource()) && result.getPickTime() + jusicProperties.getMusicExpireTime() <= System.currentTimeMillis()) {
             String musicUrl;
             if("qq".equals(result.getSource())){
-                musicUrl = this.getQQMusicUrl(result.getId());
+                musicUrl = this.getQQMusicUrl(result.getId(),result.getAlbum().getPictureUrl(),null);
             }else if("mg".equals(result.getSource())){
                 musicUrl = this.getMGMusicUrl(result.getId(),result.getName());
             }else{
@@ -922,14 +926,6 @@ public class MusicServiceImpl implements MusicService {
                             singerNames = singerNames.substring(0,singerNames.length()-1);
                         }
                         music.setArtist(singerNames);
-
-                        long duration = trackInfoJSON.getLong("interval")*1000;
-                        music.setDuration(duration);
-                        String url = getQQMusicUrl(id);
-                        if(url == null){
-                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist());
-                        }
-                        music.setUrl(url);
                         Album album = new Album();
                         JSONObject albumJSON = trackInfoJSON.getJSONObject("album");
                         Integer albumid = albumJSON.getInteger("id");
@@ -938,9 +934,19 @@ public class MusicServiceImpl implements MusicService {
                         album.setName(albumname);
                         album.setArtist(singerNames);
                         String albummid = albumJSON.getString("mid");
-                        album.setPictureUrl("https://y.gtimg.cn/music/photo_new/T002R300x300M000"+albummid+".jpg");
+//                        album.setPictureUrl("https://y.gtimg.cn/music/photo_new/T002R300x300M000"+albummid+".jpg");
                         music.setAlbum(album);
                         music.setPictureUrl("https://y.gtimg.cn/music/photo_new/T002R300x300M000"+albummid+".jpg");
+                        String mediaMid = trackInfoJSON.getJSONObject("file").getString("media_mid");
+                        album.setPictureUrl(mediaMid);
+                        long duration = trackInfoJSON.getLong("interval")*1000;
+                        music.setDuration(duration);
+                        String url = getQQMusicUrl(id,mediaMid,null);
+                        if(url == null){
+                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist());
+                        }
+                        music.setUrl(url);
+
                         return music;
                     }
                 }
@@ -1305,6 +1311,18 @@ public class MusicServiceImpl implements MusicService {
             if (response.getStatus() == 200 && jsonObject.get("result").equals(100)) {
                 return jsonObject.getJSONObject("data").getString(musicId);
             }
+        }catch(Exception exception){
+            log.error("qq音乐链接获取异常, 请检查音乐服务; Exception: [{}]", exception.getMessage());
+        }
+        return result;
+    }
+    public String getQQMusicUrl(String musicId,String mediaMid,String quality) {
+        String result = null;
+        if(quality == null){
+            quality = "320k";
+        }
+        try{
+            result = qqTrackUrlReq2.getTrackUrl(musicId,mediaMid,quality);
         }catch(Exception exception){
             log.error("qq音乐链接获取异常, 请检查音乐服务; Exception: [{}]", exception.getMessage());
         }

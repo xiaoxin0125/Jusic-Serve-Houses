@@ -37,5 +37,5 @@ public interface ConfigService {
     Float getVoteRate(String houseId);
 
     void setQqMusicCookieToProperties();
-
+    void setQqMusicCookie(String uin, String qqMusicCookie);
 }

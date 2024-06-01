@@ -4,19 +4,17 @@ import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.scoder.jusic.configuration.JusicProperties;
+import com.scoder.jusic.service.ConfigService;
 import kong.unirest.Unirest;
-import kong.unirest.UnirestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author JumpAlang
@@ -27,6 +25,9 @@ import java.util.concurrent.CompletableFuture;
 public class QQTrackUrlReq2 {
     @Autowired
     private JusicProperties jusicProperties;
+    @Autowired
+    private ConfigService configService;
+
     private String[] ua_list = {"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.39",
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1788.0",
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1788.0  uacq",
@@ -47,6 +48,9 @@ public class QQTrackUrlReq2 {
 
     }
 
+    public String getTrackUrl(String songId,String strMediaMid,String quality) throws NoSuchAlgorithmException {
+        return getTrackUrl(songId,strMediaMid,quality,jusicProperties.getQqUin(),jusicProperties.getQqMusicKey(),jusicProperties.getQqMusicGuid());
+    }
     public String getTrackUrl(String songId,String strMediaMid,String quality,String uin,String qqmusicKey,String guid) throws NoSuchAlgorithmException {
         Map<String, Object> requestBodyMap = new LinkedHashMap<>();
 
@@ -150,15 +154,29 @@ public class QQTrackUrlReq2 {
         refreshReq(url,requestBodyMap);
     }
 
+    @Scheduled(fixedRateString = "${jusic.qq_refresh_interval}")
+    public void refreshAuto(){
+        Integer failCount = 0;
+
+        while (failCount < jusicProperties.getRetryCount()) {
+            try{
+                refresh(jusicProperties.getQqUin(),jusicProperties.getQqMusicKey());
+                return;
+            }catch (Exception e){
+                failCount++;
+                log.error(e.getMessage(),e);
+            }
+        }
+
+    }
+
     public void refreshReq(String url,Map<String, Object> requestBody) throws NoSuchAlgorithmException {
         String resp = signRequest(url,requestBody);
         JSONObject responseBody = JSONObject.parseObject(resp);
         if (responseBody.getJSONObject("req_1").getInteger("code") != 0) {
-            System.err.println("刷新登录失败, code: " + responseBody.getJSONObject("req1").getInteger("code") + "\n响应体: " + responseBody);
             log.error("刷新登录失败, code: " + responseBody.getJSONObject("req1").getInteger("code") + "\n响应体: " + responseBody);
         } else {
-            System.out.println("module.tx.user.uin:"+responseBody.getJSONObject("req_1").getJSONObject("data").getString("musicid"));
-            System.out.println("module.tx.user.qqmusic_key:"+ responseBody.getJSONObject("req_1").getJSONObject("data").getString("musickey"));
+            configService.setQqMusicCookie(responseBody.getJSONObject("req_1").getJSONObject("data").getString("musicid"),responseBody.getJSONObject("req_1").getJSONObject("data").getString("musickey"));
         }
     }
     public static void main(String[] args) throws NoSuchAlgorithmException {

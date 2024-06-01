@@ -49,6 +49,11 @@
   * 个人Server酱接口：ServerJUrl 默认https://sc.ftqq.com/SCU64668T909ada7955daadfb64d5e7652b93fb135dad06e659369.send，必须修改，否则当有用户@管理员时，消息会发到我这里
   * 每个ip限制创建房间数：IpHouse 默认3个
   * 系统最多可创建房间数：HouseSize 默认32个
+  * QQ音乐帐号：Qquin
+  * QQ音乐cookie找到qqMusicKey,需要会员：QqMusicKey
+  * QQ音乐guid:QqMusicGuid 默认114514
+  * QQ音乐播放链接前缀：QqCdnAddr 默认http://ws.stream.qqmusic.qq.com/
+  * QQ音乐cookie定时刷新毫秒数：QqRefreshInterval 默认86000000
  
  3.2 使用Jonnyan404小伙伴制作的docker
 > 感谢小伙伴制作的docker <https://github.com/Jonnyan404>

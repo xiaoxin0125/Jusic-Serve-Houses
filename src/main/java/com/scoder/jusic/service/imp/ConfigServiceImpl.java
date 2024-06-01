@@ -1,5 +1,6 @@
 package com.scoder.jusic.service.imp;
 
+import com.scoder.jusic.configuration.JusicProperties;
 import com.scoder.jusic.repository.ConfigRepository;
 import com.scoder.jusic.service.ConfigService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Autowired
     private ConfigRepository configRepository;
+    @Autowired
+    private JusicProperties jusicProperties;
 
     @Override
     public void setPushSwitch(boolean pushSwitch,String houseId) {
@@ -39,6 +42,13 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public void setQqMusicCookieToProperties() {
         configRepository.setQqMusicCookieToProperties();
+    }
+
+    @Override
+    public void setQqMusicCookie(String uin, String qqMusicCookie) {
+        jusicProperties.setQqUin(uin);
+        jusicProperties.setQqMusicKey(qqMusicCookie);
+        configRepository.setQqMusicCookie(uin,qqMusicCookie);
     }
 
     @Override
