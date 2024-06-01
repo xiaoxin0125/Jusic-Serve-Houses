@@ -161,5 +161,7 @@ public interface ConfigRepository {
 
     void setAdminPassword(String password, String houseId);
     void setRootPassword(String password, String houseId);
-
+    void setQqMusicCookie(String uin, String qqMusicCookie);
+    String getQqMusicCookie(String uin);
+    void setQqMusicCookieToProperties();
 }

@@ -35,4 +35,7 @@ public interface ConfigService {
     void setRandomModel(boolean goodModel,String houseId);
 
     Float getVoteRate(String houseId);
+
+    void setQqMusicCookieToProperties();
+
 }

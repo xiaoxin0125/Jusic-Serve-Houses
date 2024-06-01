@@ -35,6 +35,12 @@ public class ConfigServiceImpl implements ConfigService {
     public Float getVoteRate(String houseId) {
         return configRepository.getVoteRate(houseId);
     }
+
+    @Override
+    public void setQqMusicCookieToProperties() {
+        configRepository.setQqMusicCookieToProperties();
+    }
+
     @Override
     public void setVoteRate(Float voteRate, String houseId) {
         configRepository.setVoteRate(voteRate,houseId);

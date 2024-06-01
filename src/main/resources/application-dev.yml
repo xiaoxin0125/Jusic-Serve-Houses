@@ -57,3 +57,8 @@ jusic:
   wy_password: ${WyPassword:xxx}
   playlist_size: ${PlaylistSize:23}
   foreverlist_size: ${$ForeverlistSize:66}
+  qq_uin: ${QqUin:1040917107}
+  qq_music_key: ${QqMusicKey:Q_H_L_63k3NGyHi21SOdUwCb_y9xpA4OocbRy5u_nUaBY8VspkbVsIhGfoSICwKjF355lAtSYtNNEXXXX} #qq音乐cookie找到qqMusicKey,需要会员
+  qq_music_guid: ${QqMusicGuid:114514}
+  qq_cdn_addr: ${QqCdnAddr:http://ws.stream.qqmusic.qq.com/}
+  qq_refresh_interval: ${QqRefreshInterval:86000}

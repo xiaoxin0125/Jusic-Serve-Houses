@@ -4,6 +4,7 @@ import com.scoder.jusic.configuration.HouseContainer;
 import com.scoder.jusic.configuration.JusicProperties;
 import com.scoder.jusic.model.House;
 import com.scoder.jusic.repository.ConfigRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -88,6 +89,28 @@ public class ConfigRepositoryImpl implements ConfigRepository {
     public void setRootPassword(String password, String houseId){
         this.put(redisKeys.getRedisRoleRoot(),password,houseId);
     }
+
+    @Override
+    public void setQqMusicCookie(String uin, String qqMusicCookie) {
+        this.put(uin,qqMusicCookie,JusicProperties.HOUSE_DEFAULT_ID);
+    }
+
+    @Override
+    public String getQqMusicCookie(String uin) {
+        return (String)this.get(uin,JusicProperties.HOUSE_DEFAULT_ID);
+
+    }
+
+    @Override
+    public void setQqMusicCookieToProperties() {
+        String qqMusicKey = this.getQqMusicCookie(jusicProperties.getQqUin());
+        if(StringUtils.isNotBlank(qqMusicKey)){
+            jusicProperties.setQqMusicKey(qqMusicKey);
+        }else{
+            setQqMusicCookie(jusicProperties.getQqUin(),jusicProperties.getQqMusicKey());
+        }
+    }
+
     @Override
     public void initRootPassword(String houseId) {
         this.setPassword(redisKeys.getRedisRoleRoot(), jusicProperties.getRoleRootPassword(),houseId);

@@ -37,7 +37,7 @@ public class QQUtils {
         put("AI00", "master");
     }};
 
-    private static String getCdnAddr(String cdnAddr) {
+    public static String getCdnAddr(String cdnAddr) {
         return (cdnAddr != null && !cdnAddr.isEmpty()) ? cdnAddr : "http://ws.stream.qqmusic.qq.com/";
     }
 }
