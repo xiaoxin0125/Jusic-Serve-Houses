@@ -69,4 +69,8 @@ public class Music extends Message implements Serializable {
 
     private String source = "wy";//搜索来源：网易、qq
 
+    private String quality = "320k";
+
+    private String mediaMid;
+
 }

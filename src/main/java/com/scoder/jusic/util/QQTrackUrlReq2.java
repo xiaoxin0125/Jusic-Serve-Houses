@@ -183,12 +183,12 @@ public class QQTrackUrlReq2 {
         QQTrackUrlReq2 qqTrackUrlReq2 = new QQTrackUrlReq2();
         String uin = "1040927107";
         String guid = "114514";
-        String qqmusicKey = "Q_H_L_63k3NGyHi21SOdUwCb_y9xpA4OocbRy5u_nUaBY8VspkbVsIhGfoSICwKjF355lAtSYtNNEXXXX";
-        String url = qqTrackUrlReq2.getTrackUrl("0039MnYb0qxYhV","002202B43Cq4V4","320k",uin,qqmusicKey,guid);
+        String qqmusicKey = "Q_H_L_63k3NWYfBRq1KV0rBZ4ySa7vYK6XS5803Q23v35s4abc0rela9BzP6jBXv5Fgk9hsk4FLhwXX4w";
+        String url = qqTrackUrlReq2.getTrackUrl("0039MnYb0qxYhV","002202B43Cq4V4","flac",uin,qqmusicKey,guid);
         System.out.println(url);
-        String url2 = qqTrackUrlReq2.getTrackUrl("002OdswE2QgnoL","003fMltF4f90Mm","320k",uin,qqmusicKey,guid);
+        String url2 = qqTrackUrlReq2.getTrackUrl("002OdswE2QgnoL","003fMltF4f90Mm","flac",uin,qqmusicKey,guid);
         System.out.println(url2);
-        String url3 = qqTrackUrlReq2.getTrackUrl("002E3MtF0IAMMY","0029Lt3K2XVP75","320k",uin,qqmusicKey,guid);
+        String url3 = qqTrackUrlReq2.getTrackUrl("002E3MtF0IAMMY","0029Lt3K2XVP75","flac",uin,qqmusicKey,guid);
         System.out.println(url3);
         qqTrackUrlReq2.refresh(uin,qqmusicKey);
     }
