@@ -169,7 +169,7 @@ public class MusicServiceImpl implements MusicService {
                 musicUrl = this.getMusicUrl(result.getId(),result.getQuality());
             }
             if(musicUrl == null){
-                musicUrl = this.getKwXmUrlIterator(result.getName()+" "+result.getArtist());
+                musicUrl = this.getKwXmUrlIterator(result.getName()+" "+result.getArtist(),result.getQuality());
             }
             if (Objects.nonNull(musicUrl)) {
                 result.setUrl(musicUrl);
@@ -532,8 +532,8 @@ public class MusicServiceImpl implements MusicService {
         return music;
     }
 
-    private String getKwXmUrlIterator(String keyword){
-        String result = this.getKwUrl(keyword);//this.getKwXmUrl(keyword,"kuwo");
+    private String getKwXmUrlIterator(String keyword,String quality){
+        String result = this.getKwUrl(keyword,quality);//this.getKwXmUrl(keyword,"kuwo");
 //        if(result == null || result.indexOf("http") == -1){
 //            result = this.getKwXmUrl(keyword,"xiami");
 //        }
@@ -561,13 +561,13 @@ public class MusicServiceImpl implements MusicService {
         return null;
     }
 
-    private String getKwUrl(String keyword) {
+    private String getKwUrl(String keyword,String quality) {
         KWTrackUrlReq kwTrackUrlReq = new KWTrackUrlReq();
         try {
-            return kwTrackUrlReq.getMusicUrlByKeyWord(keyword);
+            return kwTrackUrlReq.getMusicUrlByKeyWord(keyword,quality);
 
         }catch (Exception e){
-            log.error("酷狗虾米音乐获取异常, 请检查音乐服务; Exception: [{}]", e.getMessage());
+            log.error("酷我音乐获取异常, 请检查音乐服务; Exception: [{}]", e.getMessage());
         }
         return null;
     }
@@ -780,7 +780,7 @@ public class MusicServiceImpl implements MusicService {
                         music.setArtist(singerNames);
                         String url = data.getString("128k");
                         if(url == null){
-                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist());
+                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist(),null);
                         }
                         music.setUrl(url);
 
@@ -954,10 +954,10 @@ public class MusicServiceImpl implements MusicService {
                         music.setDuration(duration);
                         String url = getQQMusicUrl(id,mediaMid,quality);
                         if(url == null){
-                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist());
+                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist(),quality);
                         }
                         music.setUrl(url);
-
+                        music.setQuality(quality);
                         return music;
                     }
                 }
@@ -1015,7 +1015,7 @@ public class MusicServiceImpl implements MusicService {
 
                         long duration = song.getLong("dt");
                         if(url == null){
-                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist());
+                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist(),quality);
                         }
                         music.setUrl(url);
                         music.setDuration(duration);
@@ -1029,6 +1029,7 @@ public class MusicServiceImpl implements MusicService {
                         album.setPictureUrl(albumJSON.getString("picUrl"));
                         music.setAlbum(album);
                         music.setPictureUrl(album.getPictureUrl());
+                        music.setQuality(quality);
                         return music;
                     }
                 }
@@ -1242,7 +1243,7 @@ public class MusicServiceImpl implements MusicService {
                         music.setArtist(singerNames);
                         String url = data.getString("128k");
                         if(url == null){
-                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist());
+                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist(),null);
                         }
                         music.setUrl(url);
 

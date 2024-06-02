@@ -174,7 +174,7 @@ public class QQTrackUrlReq2 {
         String resp = signRequest(url,requestBody);
         JSONObject responseBody = JSONObject.parseObject(resp);
         if (responseBody.getJSONObject("req_1").getInteger("code") != 0) {
-            log.error("刷新登录失败, code: " + responseBody.getJSONObject("req1").getInteger("code") + "\n响应体: " + responseBody);
+            log.error("刷新登录失败, code: " + responseBody.getJSONObject("req_1").getInteger("code") + "\n响应体: " + responseBody);
         } else {
             configService.setQqMusicCookie(responseBody.getJSONObject("req_1").getJSONObject("data").getString("musicid"),responseBody.getJSONObject("req_1").getJSONObject("data").getString("musickey"));
         }

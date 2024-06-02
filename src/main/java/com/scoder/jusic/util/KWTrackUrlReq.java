@@ -184,7 +184,7 @@ public class KWTrackUrlReq {
                 params = "2000kflac";
                 break;
         }
-        String url = "https://mobi.kuwo.cn/mobi.s?f=web&source=kwplayer_ar_1.1.9_oppo_118980_320.apk&type=convert_url_with_sign&rid="+mid+"&br="+params;
+        String url = "https://mobi.kuwo.cn/mobi.s?f=web&source=kwplayer_ar_5.1.0.0_B_jiakong_vh.apk&type=convert_url_with_sign&rid="+mid+"&br="+params;
         HttpResponse resp = Unirest.get(url)
                 .header("user_agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)" +
                         " Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.50")
@@ -198,7 +198,7 @@ public class KWTrackUrlReq {
             csrf = kwToken;
         }
         String trackUrl = ReUtil.get("\"url\":\"(.*?)\"", resp.getBody().toString(), 1);
-        if(trackUrl == null || trackUrl.indexOf("/4141006416.mp3") != -1 || trackUrl.indexOf("/2272659253.mp3") != -1){
+        if(trackUrl == null || trackUrl.indexOf("/4141006416.mp3") != -1 || trackUrl.indexOf("/2272659253.mp3") != -1 || trackUrl.indexOf("/2015636967.aac") != -1){
             trackUrl = getTrackUrl3(mid,quality);
         }
         return trackUrl;
@@ -380,7 +380,7 @@ public class KWTrackUrlReq {
 //        System.out.println(kwTrackUrlReq.getTrackUrl(mid,"320k"));
 
         String mid2 = kwTrackUrlReq.searchByKeyWord("吉时行乐一条龙 笑人集团&小精灵&李毅杰PISSY&邓典果DDG&JarStick");
-        String url2 = kwTrackUrlReq.getTrackUrl(mid2,"320k");
+        String url2 = kwTrackUrlReq.getTrackUrl(mid2,"flac");
 
 
         String mid3 = kwTrackUrlReq.searchByKeyWord("学不会遗忘 庄东茹");
@@ -418,4 +418,5 @@ public class KWTrackUrlReq {
 //        HttpResponse response = Unirest.get("https://api.live.bilibili.com/room/v1/Danmu/getConf?room_id=1026846&platform=pc&player=web").asString();
 //        System.out.println(response);
     }
+
 }
