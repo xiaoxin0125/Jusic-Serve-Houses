@@ -7,6 +7,7 @@ import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.URLUtil;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -354,15 +355,15 @@ public class KWTrackUrlReq {
         return l2;
     }
 
-    public String getMusicUrlByKeyWord(String keyWord,String... quality){
+    public String getMusicUrlByKeyWord(String keyWord,String quality){
         String mid =this.searchByKeyWord(keyWord);
         if(mid == null){
             return null;
         }
-        if(quality == null || quality.length == 0){
+        if(StringUtils.isEmpty(quality)){
             return this.getTrackUrl(mid,"320k");
         }else{
-            return this.getTrackUrl(mid,quality[0]);
+            return this.getTrackUrl(mid,quality);
         }
     }
 
