@@ -24,7 +24,7 @@ services:
     restart: always
   service_jusicServeHouses:
     container_name: jusicServeHouses
-    image: jumpalang/jusic_serve_houses:4.5
+    image: jumpalang/jusic_serve_houses:4.8
     environment:
       - MusicApi=http://jusicMusicApi  #必须与service_jusicMusicApi的container_name一致
       - APIUSER=admin  #api认证接口用户名
@@ -39,6 +39,11 @@ services:
       - ForeverlistSize=66
       - ReTryCount=2
       - RedisHost=redis
+      - QqUin=1040927107
+      - QqMusicKey=Q_H_L_63k3NWYfBRq1KV0rBZ4ySa7vYK6XS5803Q23v35s4abc0rela9BzP6jBXv5Fgk9hsk4FLXXXXXX
+      - QqMusicGuid=114514
+      - QqCdnAddr=http://ws.stream.qqmusic.qq.com/
+      - QqRefreshInterval=86000000
     ports:
       - "8080:8888"
     depends_on:

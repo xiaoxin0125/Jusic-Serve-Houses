@@ -76,22 +76,22 @@ public interface MusicService {
      */
     Music getMusic(String keyword);
 
-    Music getQQMusic(String keyword);
-    Music getWYMusic(String keyword);
+    Music getQQMusic(Music music);
+    Music getWYMusic(Music music);
 
     Music getLZMusic(Integer index);
 
     Music getAIMusic(String id);
 
-    Music getWYMusicById(String id);
+    Music getWYMusicById(String id,String quality);
 
-    Music getQQMusicById(String id);
+    Music getQQMusicById(String id,String quality);
 
     Music getMGMusic(String keyword);
 
     Music getMGMusicById(String id);
 
-    Music getWYDTMusicById(String id);
+    Music getWYDTMusicById(String id,String quality);
 
     /**
      * get music url
@@ -99,7 +99,7 @@ public interface MusicService {
      * @param musicId music id
      * @return url
      */
-    String getMusicUrl(String musicId);
+    String getMusicUrl(String musicId,String quality);
 
     String getQQMusicUrl(String musicId);
 

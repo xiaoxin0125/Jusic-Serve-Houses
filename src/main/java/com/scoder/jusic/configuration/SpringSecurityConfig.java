@@ -41,11 +41,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/house/get").permitAll()
                 .antMatchers(HttpMethod.POST,"/house/search").permitAll()
                 .antMatchers(HttpMethod.POST,"/house/getMiniCode").permitAll()
-                .antMatchers(HttpMethod.GET,"/netease/loginByPhone").permitAll()
-                .antMatchers(HttpMethod.GET,"/netease/loginByEmail").permitAll()
-                .antMatchers(HttpMethod.GET,"/netease/loginRefresh").permitAll()
-                .antMatchers(HttpMethod.GET,"/netease/setCookie").permitAll().
-                antMatchers(HttpMethod.POST,"/server/**").permitAll().
+                .antMatchers(HttpMethod.POST,"/server/**").permitAll().
                 antMatchers(HttpMethod.GET,"/server/**").permitAll().
                 antMatchers("/img/**").permitAll().
                 antMatchers("/css/**").permitAll().

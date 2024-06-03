@@ -11,6 +11,6 @@ ENV MiniId=wx693312f83f255cf3 MiniSecrect=xxx
 ENV RoleRootPassword=654321
 ENV WyAccount=xxxx@163.com WyPassword=xxx
 ENV PlaylistSize=23 ForeverlistSize=66
+ENV QqUin=1040927107 QqMusicKey=Q_H_L_63k3NWYfBRq1KV0rBZ4ySa7vYK6XS5803Q23v35s4abc0rela9BzP6jBXv5Fgk9hsk4FLXXXXXX QqMusicGuid=114514 QqCdnAddr=http://ws.stream.qqmusic.qq.com/ QqRefreshInterval=86000000
 
-
-ENTRYPOINT java -jar -DAPIUSER=$APIUSER -DAPIPWD=$APIPWD -DRedisHost="$RedisHost" -DMusicApi="$MusicApi" -DMusicExpireTime=$MusicExpireTime -DReTryCount=$ReTryCount -DVoteRate=$VoteRate -DWyTopUrl=$WyTopUrl -DServerJUrl="$ServerJUrl" -DIpHouse=$IpHouse -DHouseSize=$HouseSize -DMiniId=$MiniId -DMiniSecrect=$MiniSecrect -DRoleRootPassword=$RoleRootPassword -DWyAccount=$WyAccount -DWyPassword=$WyPassword -DPlaylistSize=$PlaylistSize -DForeverlistSize=$ForeverlistSize ./jusic-serve.jar
+ENTRYPOINT java -jar -DAPIUSER=$APIUSER -DAPIPWD=$APIPWD -DRedisHost="$RedisHost" -DMusicApi="$MusicApi" -DMusicExpireTime=$MusicExpireTime -DReTryCount=$ReTryCount -DVoteRate=$VoteRate -DWyTopUrl=$WyTopUrl -DServerJUrl="$ServerJUrl" -DIpHouse=$IpHouse -DHouseSize=$HouseSize -DMiniId=$MiniId -DMiniSecrect=$MiniSecrect -DRoleRootPassword=$RoleRootPassword -DWyAccount=$WyAccount -DWyPassword=$WyPassword -DPlaylistSize=$PlaylistSize -DForeverlistSize=$ForeverlistSize -DQqUin=$QqUin -DQqMusicKey=$QqMusicKey -DQqMusicGuid=$QqMusicGuid -DQqCdnAddr=$QqCdnAddr -DQqRefreshInterval=$QqRefreshInterval ./jusic-serve.jar

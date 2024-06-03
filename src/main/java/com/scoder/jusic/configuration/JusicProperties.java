@@ -158,7 +158,11 @@ public class JusicProperties {
     private Integer foreverlistSize = 33;
     private Boolean listCircleModel = false;
 
-
+    private String qqUin = "1040927107";
+    private String qqMusicKey = "";//需要会员,qqmusic_key可以从Cookie中/客户端的请求体中（comm.authst）获取
+    private String qqMusicGuid = "114514";
+    private String qqCdnAddr = "http://ws.stream.qqmusic.qq.com/";
+    private Integer qqRefreshInterval = 86000;
     public static final String HOUSE_DEFAULT_ID = "DEFAULT";
     public static final String HOUSE_DEFAULT_NAME = "一起听歌吧";
     public static final String HOUSE_DEFAULT_DESC = "永远年轻！永远热泪盈眶！";

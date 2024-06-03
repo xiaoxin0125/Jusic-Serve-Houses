@@ -78,9 +78,9 @@ public class MusicController {
         // 点歌结果反馈
         if("qq".equals(music.getSource())){
             if(music.getId() != null){
-                pick = musicService.getQQMusicById(music.getId());
+                pick = musicService.getQQMusicById(music.getId(),music.getQuality());
             }else{
-                pick = musicService.getQQMusic(music.getName());
+                pick = musicService.getQQMusic(music);
             }
         }else if("mg".equals(music.getSource())){
             if(music.getId() != null){
@@ -90,31 +90,31 @@ public class MusicController {
             }
         }else if("lz".equals(music.getSource())){
             if(StringUtils.isQQMusicId(music.getId())){
-                pick = musicService.getQQMusicById(music.getId());
+                pick = musicService.getQQMusicById(music.getId(),music.getQuality());
             }else if(StringUtils.isWYMusicId(music.getId())){
-                pick = musicService.getWYMusicById(music.getId());
+                pick = musicService.getWYMusicById(music.getId(),music.getQuality());
             }else{
                 pick = musicService.getLZMusic(Integer.valueOf(music.getId()));
             }
         }else if("ai".equals(music.getSource())){
             if(StringUtils.isQQMusicId(music.getId())){
-                pick = musicService.getQQMusicById(music.getId());
+                pick = musicService.getQQMusicById(music.getId(),music.getQuality());
             }else if(StringUtils.isWYMusicId(music.getId())){
-                pick = musicService.getWYMusicById(music.getId());
+                pick = musicService.getWYMusicById(music.getId(),music.getQuality());
             }else{
                 pick = musicService.getAIMusic(music.getId());
             }
         }else if("wydt".equals(music.getSource())){
             if(music.getId() != null){
-                pick = musicService.getWYDTMusicById(music.getId());
+                pick = musicService.getWYDTMusicById(music.getId(),music.getQuality());
             }else{
-                pick = musicService.getWYDTMusicById(music.getId());
+                pick = musicService.getWYDTMusicById(music.getId(),music.getQuality());
             }
         }else{
             if(music.getId() != null){
-                pick = musicService.getWYMusicById(music.getId());
+                pick = musicService.getWYMusicById(music.getId(),music.getQuality());
             }else{
-                pick = musicService.getWYMusic(music.getName());
+                pick = musicService.getWYMusic(music);
             }
 //            pick = musicService.getMusic(music.getId() == null?music.getName():music.getId());
         }

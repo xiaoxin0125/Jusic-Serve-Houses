@@ -4,6 +4,7 @@ package com.scoder.jusic.util;
 import cn.hutool.core.codec.Base64Encoder;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ReUtil;
+import cn.hutool.core.util.URLUtil;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
@@ -183,7 +184,7 @@ public class KWTrackUrlReq {
                 params = "2000kflac";
                 break;
         }
-        String url = "https://mobi.kuwo.cn/mobi.s?f=web&source=kwplayer_ar_1.1.9_oppo_118980_320.apk&type=convert_url_with_sign&rid="+mid+"&br="+params;
+        String url = "https://mobi.kuwo.cn/mobi.s?f=web&source=kwplayer_ar_5.1.0.0_B_jiakong_vh.apk&type=convert_url_with_sign&rid="+mid+"&br="+params;
         HttpResponse resp = Unirest.get(url)
                 .header("user_agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)" +
                         " Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.50")
@@ -197,7 +198,7 @@ public class KWTrackUrlReq {
             csrf = kwToken;
         }
         String trackUrl = ReUtil.get("\"url\":\"(.*?)\"", resp.getBody().toString(), 1);
-        if(trackUrl == null || trackUrl.indexOf("/4141006416.mp3") != -1 || trackUrl.indexOf("/2272659253.mp3") != -1){
+        if(trackUrl == null || trackUrl.indexOf("/4141006416.mp3") != -1 || trackUrl.indexOf("/2272659253.mp3") != -1 || trackUrl.indexOf("/2015636967.aac") != -1){
             trackUrl = getTrackUrl3(mid,quality);
         }
         return trackUrl;
@@ -233,7 +234,7 @@ public class KWTrackUrlReq {
 
 
     public String searchByKeyWord(String keyWord) {
-        String url = "https://search.kuwo.cn/r.s?pn=0&rn=1&all="+keyWord+"&ft=music&newsearch=1&alflac=1&itemset=web_2013&client=kt&cluster=0&vermerge=1&rformat=json&encoding=utf8&show_copyright_off=1&pcmp4=1&ver=mbox&plat=pc&vipver=MUSIC_9.2.0.0_W6&devid=11404450&newver=1&issubtitle=1&pcjson=1";//"http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key="+keyWord+"&pn=1&rn=20&httpsStatus=1&reqId=a47f76b0-1c12-11ee-93a9-af6c69693772&plat=web_www&from=";
+        String url = "https://search.kuwo.cn/r.s?pn=0&rn=1&all="+ URLUtil.encode(keyWord)+"&ft=music&newsearch=1&alflac=1&itemset=web_2013&client=kt&cluster=0&vermerge=1&rformat=json&encoding=utf8&show_copyright_off=1&pcmp4=1&ver=mbox&plat=pc&vipver=MUSIC_9.2.0.0_W6&devid=11404450&newver=1&issubtitle=1&pcjson=1";//"http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key="+keyWord+"&pn=1&rn=20&httpsStatus=1&reqId=a47f76b0-1c12-11ee-93a9-af6c69693772&plat=web_www&from=";
         HttpResponse resp = Unirest.get(url)
                 .header("user_agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)" +
                         " Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.50")
@@ -367,18 +368,55 @@ public class KWTrackUrlReq {
 
     public static void main(String[] args) {
         KWTrackUrlReq kwTrackUrlReq = new KWTrackUrlReq();
-//        String mid = kwTrackUrlReq.searchByKeyWord("周杰伦晴天");
-        String mid2 = kwTrackUrlReq.searchByKeyWord("吉时行乐一条龙"+"+笑喜人集团,小精灵,李毅杰PISSY,邓典果DDG,JarStick");
+//        String mid = kwTrackUrlReq.searchByKeyWord("吉时行乐一条龙"+"&笑喜人集团;小喜精灵;李毅杰PISSY;邓典果DDG;JarStick");
+        String mid = kwTrackUrlReq.searchByKeyWord("若月亮没来(若是月亮还没来) 王宇宙Leto&乔浚丞");
+        String url = kwTrackUrlReq.getTrackUrl(mid,"320k");
+
+//        String mid2 = kwTrackUrlReq.searchByKeyWord("吉时行乐一条龙"+"+笑人集团,小精灵,李毅杰PISSY,邓典果DDG,JarStick");
 //        String mid3 = kwTrackUrlReq.searchByKeyWord("学不会遗忘+庄东茹");
         //new KWTrackUrlReq().getTrackUrl("228908","320k");
 //        System.out.println(mid);
 //        System.out.println(kwTrackUrlReq.getTrackUrl(mid,"flac"));
-        System.out.println(kwTrackUrlReq.getTrackUrl(mid2,"flac"));
-//        System.out.println(kwTrackUrlReq.getTrackUrl(mid3,"flac"));
+//        System.out.println(kwTrackUrlReq.getTrackUrl(mid,"320k"));
+
+        String mid2 = kwTrackUrlReq.searchByKeyWord("吉时行乐一条龙 笑人集团&小精灵&李毅杰PISSY&邓典果DDG&JarStick");
+        String url2 = kwTrackUrlReq.getTrackUrl(mid2,"flac");
+
+
+        String mid3 = kwTrackUrlReq.searchByKeyWord("学不会遗忘 庄东茹");
+        String url3 = kwTrackUrlReq.getTrackUrl(mid3,"320k");
+
+
+        String mid4 = kwTrackUrlReq.searchByKeyWord("晴天 周杰伦");
+        String url4 = kwTrackUrlReq.getTrackUrl(mid4,"320k");
+
+
+        String mid5 = kwTrackUrlReq.searchByKeyWord("诺言 郭有才");
+        String url5 = kwTrackUrlReq.getTrackUrl(mid5,"320k");
+
+        String mid6 = kwTrackUrlReq.searchByKeyWord(
+                "别怕我伤心 七元");
+        String url6 = kwTrackUrlReq.getTrackUrl(mid6,"320k");
+
+        System.out.println("若月亮没来(若是月亮还没来) 王宇宙Leto;乔浚丞"+":"+mid);
+        System.out.println(url);
+        System.out.println("吉时行乐一条龙 笑人集团,小精灵,李毅杰PISSY,邓典果DDG,JarStick"+":"+mid2);
+        System.out.println(url2);
+        System.out.println("学不会遗忘 庄东茹"+":"+mid3);
+        System.out.println(url3);
+        System.out.println("周杰伦 晴天"+":"+mid4);
+        System.out.println(url4);
+        System.out.println("诺言 郭有才"+":"+mid5);
+        System.out.println(url5);
+
+        System.out.println("别怕我伤心 七元"+":"+mid6);
+        System.out.println(url6);
+        //        System.out.println(kwTrackUrlReq.getTrackUrl(mid3,"flac"));
 
 //        String url = kwTrackUrlReq.getTrackUrl2("94239","320k");
 //        System.out.println(url);
 //        HttpResponse response = Unirest.get("https://api.live.bilibili.com/room/v1/Danmu/getConf?room_id=1026846&platform=pc&player=web").asString();
 //        System.out.println(response);
     }
+
 }
