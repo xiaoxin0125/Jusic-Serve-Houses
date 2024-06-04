@@ -162,7 +162,8 @@ public class MusicServiceImpl implements MusicService {
         if (!"ai".equals(result.getSource()) && !"lz".equals(result.getSource()) && result.getPickTime() + jusicProperties.getMusicExpireTime() <= System.currentTimeMillis()) {
             String musicUrl;
             if("qq".equals(result.getSource())){
-                musicUrl = this.getQQMusicUrl(result.getId(),result.getMediaMid(),result.getQuality());
+//                musicUrl = this.getQQMusicUrl(result.getId(),result.getMediaMid(),result.getQuality());
+                musicUrl = this.getKwXmUrlIterator(result.getName()+" "+result.getArtist(),result.getQuality());
             }else if("mg".equals(result.getSource())){
                 musicUrl = this.getMGMusicUrl(result.getId(),result.getName());
             }else{
@@ -952,12 +953,28 @@ public class MusicServiceImpl implements MusicService {
                         music.setMediaMid(mediaMid);
                         long duration = trackInfoJSON.getLong("interval")*1000;
                         music.setDuration(duration);
-                        String url = getQQMusicUrl(id,mediaMid,quality);
+
+//                        String url = getQQMusicUrl(id,mediaMid,quality);
+//                        if(url == null){
+//                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist(),quality);
+//                        }
+                        String url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist(),quality);
                         if(url == null){
-                            url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist(),quality);
+                            Music temp = new Music();
+                            temp.setName(music.getName()+" "+music.getArtist());
+                            temp.setQuality(quality);
+                            temp = this.getWYMusicByName(music);
+                            if(temp != null){
+                                url = temp.getUrl();
+                            }
                         }
-                        music.setUrl(url);
+                        if(url == null){
+                            failCount++;
+                            music = null;
+                            continue;
+                        }
                         music.setQuality(quality);
+                        music.setUrl(url);
                         return music;
                     }
                 }
@@ -1016,6 +1033,11 @@ public class MusicServiceImpl implements MusicService {
                         long duration = song.getLong("dt");
                         if(url == null){
                             url = this.getKwXmUrlIterator(music.getName()+" "+music.getArtist(),quality);
+                        }
+                        if(url == null){
+                            failCount++;
+                            music = null;
+                            continue;
                         }
                         music.setUrl(url);
                         music.setDuration(duration);

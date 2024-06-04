@@ -8,7 +8,6 @@ import com.scoder.jusic.service.ConfigService;
 import kong.unirest.Unirest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -154,7 +153,7 @@ public class QQTrackUrlReq2 {
         refreshReq(url,requestBodyMap);
     }
 
-    @Scheduled(fixedRateString = "${jusic.qq_refresh_interval}")
+//    @Scheduled(fixedRateString = "${jusic.qq_refresh_interval}")
     public void refreshAuto(){
         Integer failCount = 0;
 
@@ -183,7 +182,7 @@ public class QQTrackUrlReq2 {
         QQTrackUrlReq2 qqTrackUrlReq2 = new QQTrackUrlReq2();
         String uin = "1040927107";
         String guid = "114514";
-        String qqmusicKey = "Q_H_L_63k3NWYfBRq1KV0rBZ4ySa7vYK6XS5803Q23v35s4abc0rela9BzP6jBXv5Fgk9hsk4FLhwXX4w";
+        String qqmusicKey = "Q_H_L_63k3Ne76-sVPOzugn3RL_VZAFhxTvQ08C8JyfxTtvZypTUBK1OcLRK787PKwLlstBZFfySfpzhQ";
         String url = qqTrackUrlReq2.getTrackUrl("0039MnYb0qxYhV","002202B43Cq4V4","flac",uin,qqmusicKey,guid);
         System.out.println(url);
         String url2 = qqTrackUrlReq2.getTrackUrl("002OdswE2QgnoL","003fMltF4f90Mm","flac",uin,qqmusicKey,guid);
