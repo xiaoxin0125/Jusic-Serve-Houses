@@ -64,6 +64,10 @@ public class MusicController {
 
         Long playlistSize = musicService.noDefaultPlaylistSize(houseId);
         House matchHouse = houseContainer.get(houseId);
+        if(matchHouse == null){
+            sessionService.send(sessionId,MessageType.NOTICE, Response.failure((Object) null, "房间不存在"),houseId);
+            return;
+        }
         long limitPlaylistSize = matchHouse.getEnableStatus()?jusicProperties.getForeverlistSize():jusicProperties.getPlaylistSize();
         if(playlistSize != null && playlistSize+1 >= limitPlaylistSize){
             sessionService.send(sessionId,MessageType.NOTICE, Response.failure((Object) null, "最多能点播"+limitPlaylistSize+"首歌"),houseId);
