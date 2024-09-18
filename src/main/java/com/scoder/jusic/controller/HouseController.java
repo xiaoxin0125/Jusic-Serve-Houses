@@ -133,9 +133,9 @@ public class HouseController {
         house.setSessionId(sessionId);
         house.setRemoteAddress(ip);//IPUtils.getRemoteAddress(request);
         house.setAdminPwd(jusicProperties.getRoleAdminPassword());
-        houseContainer.add(house);
         oldSession.getAttributes().put("houseId",sessionId);
         sessionService.putSession(oldSession,sessionId);
+        houseContainer.add(house);
         //通知当前要离开的房间总数变化，及推送最新房间歌单等
 
         // 2. send playing
