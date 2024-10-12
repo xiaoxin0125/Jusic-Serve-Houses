@@ -4,16 +4,23 @@ import com.scoder.jusic.configuration.JusicProperties;
 import com.scoder.jusic.service.MailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 /**
  * @author H
@@ -27,34 +34,86 @@ public class MailServiceImpl implements MailService {
     @Autowired
     private JavaMailSender javaMailSender;
 
-//    public static void main(String[] args) {
-//        RestTemplate restTemplate = new RestTemplate();
-//        String url = "https://sc.ftqq.com/SCU64668T909ada7955daadfb64d5e7652b93fb135dad06e659369.send";
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
-//        map.add("text", "844072586@qq.com");
-//        map.add("desp","我是中国人");
-//        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-//        ResponseEntity<String> response = restTemplate.postForEntity( url, request , String.class );
-//        System.out.println(response.getBody());
-//    }
+    public static void main(String[] args) throws IOException, NoSuchAlgorithmException, KeyManagementException {
+        boolean result = commonSendJ("https://sctapi.ftqq.com/xxx.send","你好啊","大杀四方");
+    }
+    public static boolean commonSendJ(String webUrl,String title,String desc) throws IOException, NoSuchAlgorithmException, KeyManagementException {
+        String postData = "text=" + URLEncoder.encode(title, "UTF-8") + "&desp=" + URLEncoder.encode(desc, "UTF-8");
+
+        HttpsURLConnection conn = null;
+
+        URL url = new URL(webUrl);
+        DataOutputStream wr;
+
+        if (webUrl.contains("https:")){
+            //是https
+            //绕过证书
+            SSLContext context = createIgnoreVerifySSL();
+            conn = (HttpsURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            conn.setDoOutput(true);
+            conn.setSSLSocketFactory(context.getSocketFactory());
+            wr = new DataOutputStream(conn.getOutputStream());
+        }else {
+            conn = (HttpsURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            conn.setDoOutput(true);
+            //当前链接是http
+            wr = new DataOutputStream(conn.getOutputStream());
+        }
+
+
+        wr.writeBytes(postData);
+        wr.flush();
+        wr.close();
+
+        int responseCode = conn.getResponseCode();
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        return response.toString().indexOf("\"errno\":0") != -1;
+    }
+    //绕过SSL、TLS证书
+    public static SSLContext createIgnoreVerifySSL() throws NoSuchAlgorithmException, KeyManagementException {
+        SSLContext sc = SSLContext.getInstance("TLS");
+        // 实现一个X509TrustManager接口，用于绕过验证，不用修改里面的方法
+        X509TrustManager trustManager = new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(
+                    java.security.cert.X509Certificate[] paramArrayOfX509Certificate,
+                    String paramString) throws CertificateException {
+            }
+
+            @Override
+            public void checkServerTrusted(
+                    java.security.cert.X509Certificate[] paramArrayOfX509Certificate,
+                    String paramString) throws CertificateException {
+            }
+
+            @Override
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        };
+
+        sc.init(null, new TrustManager[]{trustManager}, null);
+        return sc;
+    }
     public boolean sendServerJ(String text,String desc){
         try{
-            RestTemplate restTemplate = new RestTemplate();
             String url = jusicProperties.getServerJUrl();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
-            map.add("text", text);
-            map.add("desp",desc);
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-            ResponseEntity<String> response = restTemplate.postForEntity( url, request , String.class );
-            if(response.getBody().indexOf("success") != -1){
-                return true;
-            }
+            return commonSendJ(url,text,desc);
         }catch(Exception e){
-            log.error("发送至Server酱失败：{}",e.getLocalizedMessage());
+            log.error("发送至Server酱失败：{}",e.getMessage());
         }
         return false;
 
