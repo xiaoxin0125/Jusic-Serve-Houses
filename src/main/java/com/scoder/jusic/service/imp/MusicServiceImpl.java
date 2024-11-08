@@ -1,5 +1,6 @@
 package com.scoder.jusic.service.imp;
 
+import cn.hutool.core.util.ReUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.scoder.jusic.common.page.HulkPage;
@@ -250,6 +251,7 @@ public class MusicServiceImpl implements MusicService {
                 if(pwd != null){
                     params += "&password="+pwd;
                 }
+                params +="&realIP=120.32.197.228";
                 response = Unirest.get(jusicProperties.getMusicServeDomain() + "/login"+params )
                         .asString();
 
@@ -260,7 +262,9 @@ public class MusicServiceImpl implements MusicService {
 //                    log.info("获取音乐结果：{}", jsonObject);
                     if (jsonObject.get("code").equals(200)) {
                         String cookie = jsonObject.getString("cookie");
-                        NETEASE_COOKIE = cookie;
+                        if(!org.springframework.util.StringUtils.isEmpty(cookie)){
+                            NETEASE_COOKIE = ReUtil.get("MUSIC_U=(.*?);", cookie.toString(), 0);
+                        }
                         return cookie;
                     }else{
                         return jsonObject.getString("msg");
