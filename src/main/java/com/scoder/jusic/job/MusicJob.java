@@ -17,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.util.LinkedList;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -27,6 +29,24 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Component
 @Slf4j
 public class MusicJob {
+
+    private final ExecutorService executorService;
+    private final ConcurrentHashMap<String, AtomicBoolean> houseTaskMap;
+    private final JusicProperties jusicProperties;
+
+    public MusicJob(JusicProperties jusicProperties) {
+        int cpuCores = Runtime.getRuntime().availableProcessors();
+        this.executorService = new ThreadPoolExecutor(
+                cpuCores+1, // 核心线程数
+                cpuCores*2, // 最大线程数
+                60L, TimeUnit.SECONDS, // 空闲线程存活时间
+                new LinkedBlockingQueue<>(jusicProperties.getHouseSize()/3), // 阻塞队列大小
+                new ThreadPoolExecutor.CallerRunsPolicy() // 拒绝策略
+        );
+        this.jusicProperties = jusicProperties;
+        this.houseTaskMap = new ConcurrentHashMap<>();
+
+    }
 
     @Autowired
     private MusicPlayingRepository musicPlayingRepository;
@@ -42,8 +62,6 @@ public class MusicJob {
     private MusicService musicService;
     @Autowired
     private HouseContainer houseContainer;
-    @Autowired
-    private JusicProperties jusicProperties;
 
     /**
      * 广播条件：第一次启动时 playing 为空、音乐播放完毕、投票切歌
@@ -67,35 +85,22 @@ public class MusicJob {
                     }
 
                     if (this.isPushSwitchOpen(house.getId())) {
-                        log.info("检测到推送开关已开启");
-                        Music music = musicService.musicSwitch(house.getId());
-                        long pushTime = System.currentTimeMillis();
-                        if(music.getDuration() == null){
-                            music.setDuration(300000L);
+                        houseTaskMap.computeIfAbsent(house.getId(), id -> new AtomicBoolean(false));
+
+                        if (houseTaskMap.get(house.getId()).compareAndSet(false, true)) {
+                            executorService.submit(() -> {
+                                try {
+                                    processHouse(house);
+                                } catch (Exception e) {
+                                    handleException(e, house);
+                                } finally {
+                                    houseTaskMap.remove(house.getId());
+                                }
+                            });
                         }
-                        configRepository.setLastMusicPushTimeAndDuration(pushTime, music.getDuration(),house.getId());
-                        music.setPushTime(pushTime);
-                        sessionService.send(MessageType.MUSIC, Response.success(music, "正在播放"),house.getId());
-                        musicPlayingRepository.leftPush(music,house.getId());//更新music pushTime
-                        musicPlayingRepository.keepTheOne(house.getId());
-                        log.info("已保存推送时间和音乐时长"+house.getName());
-                        configRepository.setPushSwitch(false,house.getId());
-                        log.info("已关闭音乐推送开关"+house.getName());
-                        musicVoteRepository.reset(house.getId());
-                        log.info("已重置投票");
-//                        log.info("已向所有客户端推送音乐, 音乐: {}, 时长: {}, 推送时间: {}, 链接: {}", music.getName(), music.getDuration(), pushTime, music.getUrl());
-                        LinkedList<Music> result = musicService.getPickList(house.getId());
-                        sessionService.send(MessageType.PICK, Response.success(result, "播放列表"),house.getId());
-//                        log.info("已向客户端推送播放列表, 共 {} 首, 列表: {}", result.size(), result);
                     }
                 }catch(Exception e){
-                    try{
-                        configRepository.destroy(house.getId());
-                        musicPlayingRepository.destroy(house.getId());
-                    }catch(Exception e2){
-                        log.error("定时任务销毁config及playing异常[{}]",e2.getMessage());
-                    }
-                    log.error("houseName:{},houseId:{},message:[{}]",house.getName(),house.getId(),e.getMessage());
+                  handleException(e,house);
                 }
             }else if(!JusicProperties.HOUSE_DEFAULT_ID.equals(house.getId()) && house != null && (house.getEnableStatus() == null || !house.getEnableStatus()) && (System.currentTimeMillis()-house.getCreateTime() > 20000)){
                     houseContainer.destroy(house.getId());
@@ -103,6 +108,42 @@ public class MusicJob {
 //
 
         }
+
+    }
+    private void handleException(Exception e, House house) {
+        try {
+            configRepository.destroy(house.getId());
+            musicPlayingRepository.destroy(house.getId());
+        } catch (Exception e2) {
+            log.error("定时任务销毁config及playing异常[{}]", e2.getMessage());
+        }
+        log.error("houseName:{},houseId:{},message:[{}]", house.getName(), house.getId(), e.getMessage());
+    }
+    @PreDestroy
+    public void shutdown() {
+        executorService.shutdown();
+    }
+    private void processHouse(House house){
+        log.info("检测到推送开关已开启");
+        Music music = musicService.musicSwitch(house.getId());
+        long pushTime = System.currentTimeMillis();
+        if(music.getDuration() == null){
+            music.setDuration(300000L);
+        }
+        configRepository.setLastMusicPushTimeAndDuration(pushTime, music.getDuration(),house.getId());
+        music.setPushTime(pushTime);
+        sessionService.send(MessageType.MUSIC, Response.success(music, "正在播放"),house.getId());
+        musicPlayingRepository.leftPush(music,house.getId());//更新music pushTime
+        musicPlayingRepository.keepTheOne(house.getId());
+        log.info("已保存推送时间和音乐时长"+house.getName());
+        configRepository.setPushSwitch(false,house.getId());
+        log.info("已关闭音乐推送开关"+house.getName());
+        musicVoteRepository.reset(house.getId());
+        log.info("已重置投票");
+//                        log.info("已向所有客户端推送音乐, 音乐: {}, 时长: {}, 推送时间: {}, 链接: {}", music.getName(), music.getDuration(), pushTime, music.getUrl());
+        LinkedList<Music> result = musicService.getPickList(house.getId());
+        sessionService.send(MessageType.PICK, Response.success(result, "播放列表"),house.getId());
+//                        log.info("已向客户端推送播放列表, 共 {} 首, 列表: {}", result.size(), result);
 
     }
 
@@ -144,4 +185,13 @@ public class MusicJob {
         return null == musicPlayingRepository.getPlaying(houseId);
     }
 
+    public static void main(String[] args){
+        int cpuCores = Runtime.getRuntime().availableProcessors();
+
+        // 根据 CPU 核心数设置核心线程数和最大线程数
+        int corePoolSize = cpuCores + 1;
+        int maximumPoolSize = cpuCores * 2;
+
+        System.out.println(cpuCores);
+    }
 }
